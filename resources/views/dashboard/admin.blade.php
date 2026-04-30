@@ -1,0 +1,366 @@
+{{-- resources/views/dashboard/admin.blade.php --}}
+@extends('layouts.app')
+@section('title', 'Panel Admin')
+
+@section('content')
+<style>
+  .btn-solid {
+    background: #0F6E56;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 9px 18px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+  }
+  .btn-solid:hover {
+    background: #0a5a46;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15,110,86,0.25);
+  }
+  .btn-outline {
+    background: #fff;
+    color: #0F6E56;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 9px 18px;
+    border-radius: 10px;
+    border: 1.5px solid #0F6E56;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+  }
+  .btn-outline:hover {
+    background: #e8f5f0;
+    transform: translateY(-1px);
+  }
+  .nav-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1.5px solid #e5e7eb;
+    background: #fff;
+    color: #6b7280;
+    text-decoration: none;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .nav-tab:hover {
+    border-color: #0F6E56;
+    color: #0F6E56;
+    background: #f0faf6;
+  }
+  .nav-tab.active {
+    background: #0F6E56;
+    border-color: #0F6E56;
+    color: #fff;
+  }
+  .stat-card {
+    background: #fff;
+    border: 1.5px solid #f0f0f0;
+    border-radius: 16px;
+    padding: 16px 20px;
+  }
+  .stat-label { font-size: 0.72rem; color: #9ca3af; margin-bottom: 4px; }
+  .stat-val   { font-size: 1.6rem; font-weight: 600; line-height: 1; }
+  .table-wrap {
+    background: #fff;
+    border: 1.5px solid #f0f0f0;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .table-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1.5px solid #f5f5f5;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .search-admin {
+    font-family: 'DM Sans', sans-serif;
+    padding: 7px 14px;
+    border: 1.5px solid #f0f0f0;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    color: #1a1a1a;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 200px;
+  }
+  .search-admin:focus { border-color: #0F6E56; }
+  table { width: 100%; border-collapse: collapse; }
+  thead { background: #fafafa; }
+  th {
+    padding: 11px 16px;
+    text-align: left;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #9ca3af;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    border-bottom: 1.5px solid #f5f5f5;
+  }
+  td {
+    padding: 12px 16px;
+    font-size: 0.82rem;
+    color: #374151;
+    border-bottom: 1px solid #fafafa;
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fdfffe; }
+  .pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .pill-terlambat   { background: #FCEBEB; color: #A32D2D; }
+  .pill-dipinjam    { background: #FAEEDA; color: #854F0B; }
+  .pill-dikembalikan{ background: #e8f5f0; color: #0F6E56; }
+  .btn-kembalikan {
+    font-family: 'DM Sans', sans-serif;
+    padding: 5px 12px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    background: transparent;
+    font-size: 0.75rem;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn-kembalikan:hover {
+    background: #e8f5f0;
+    border-color: #0F6E56;
+    color: #0F6E56;
+  }
+  .avatar {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: #e8f5f0;
+    color: #0F6E56;
+    font-size: 0.72rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+</style>
+
+{{-- ══ HEADER ══ --}}
+<div class="flex items-start justify-between flex-wrap gap-3 mb-6">
+  <div>
+    <h1 class="text-xl font-semibold" style="color: #1a1a1a;">Panel Admin</h1>
+    <p class="text-sm mt-0.5" style="color: #9ca3af;">Selamat datang, {{ auth()->user()->name }}</p>
+  </div>
+
+  {{-- Tombol Aksi --}}
+  <div class="flex flex-col gap-2">
+    <a href="{{ route('admin.peminjaman.create') }}" class="btn-solid">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
+      Tambah Peminjaman
+    </a>
+    <a href="{{ route('admin.buku.create') }}" class="btn-outline">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13
+             C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13
+             C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13
+             C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+      </svg>
+      Tambah Buku
+    </a>
+  </div>
+</div>
+
+{{-- ══ NAV TABS ══ --}}
+<div class="flex gap-2 mb-5 flex-wrap">
+  <a href="{{ route('admin.dashboard') }}" class="nav-tab active">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10
+           a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4
+           a1 1 0 001 1m-6 0h6"/>
+    </svg>
+    Dashboard
+  </a>
+  <a href="{{ route('admin.peminjaman.index') }}" class="nav-tab">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2
+           M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+    </svg>
+    Peminjaman
+  </a>
+  <a href="{{ route('admin.booking.index') }}" class="nav-tab">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13
+           C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13
+           C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13
+           C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+    </svg>
+    Booking Buku
+  </a>
+  <a href="{{ route('admin.denda.index') }}" class="nav-tab">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2
+           m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1
+           c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+    </svg>
+    Rekap Denda
+  </a>
+  <a href="{{ route('books.index') }}" class="nav-tab">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+    </svg>
+    Cari Buku
+  </a>
+</div>
+
+{{-- ══ STAT CARDS ══ --}}
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+  <div class="stat-card">
+    <p class="stat-label">Total Buku</p>
+    <p class="stat-val" style="color: #0F6E56;">{{ number_format($stats['total_buku']) }}</p>
+  </div>
+  <div class="stat-card">
+    <p class="stat-label">Dipinjam</p>
+    <p class="stat-val" style="color: #854F0B;">{{ $stats['dipinjam'] }}</p>
+  </div>
+  <div class="stat-card" style="border-color: #fde8e8;">
+    <p class="stat-label">Terlambat</p>
+    <p class="stat-val" style="color: #A32D2D;">{{ $stats['terlambat'] }}</p>
+  </div>
+  <div class="stat-card" style="border-color: #fde8e8;">
+    <p class="stat-label">Denda Bulan Ini</p>
+    <p class="stat-val" style="color: #A32D2D; font-size: 1.2rem;">
+      Rp{{ number_format($stats['denda_bulan_ini'], 0, ',', '.') }}
+    </p>
+  </div>
+</div>
+
+{{-- ══ TABEL PEMINJAMAN TERKINI ══ --}}
+<div class="table-wrap">
+  <div class="table-head">
+    <div>
+      <p class="text-sm font-semibold" style="color: #1a1a1a;">Peminjaman Terkini</p>
+      <p class="text-xs mt-0.5" style="color: #9ca3af;">10 data terbaru</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <form method="GET">
+        <input type="text" name="q" value="{{ request('q') }}"
+               placeholder="Cari siswa atau buku..."
+               class="search-admin">
+      </form>
+      <a href="{{ route('admin.peminjaman.index') }}"
+         class="text-xs font-medium transition whitespace-nowrap"
+         style="color: #0F6E56;">
+        Lihat semua →
+      </a>
+    </div>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table>
+      <thead>
+        <tr>
+          <th>Siswa</th>
+          <th>Buku</th>
+          <th class="hidden md:table-cell">Batas Kembali</th>
+          <th>Status</th>
+          <th>Denda</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach($peminjaman as $p)
+          <tr>
+            <td>
+              <div class="flex items-center gap-2">
+                <div class="avatar">{{ strtoupper(substr($p->siswa->nama, 0, 1)) }}</div>
+                <div>
+                  <p class="font-medium text-xs" style="color: #1a1a1a;">{{ $p->siswa->nama }}</p>
+                  <p class="text-xs" style="color: #9ca3af;">{{ $p->siswa->kelas }}</p>
+                </div>
+              </div>
+            </td>
+            <td>
+              <p class="text-xs font-medium truncate" style="color: #1a1a1a; max-width: 150px;"
+                 title="{{ $p->book->judul }}">
+                {{ Str::limit($p->book->judul, 28) }}
+              </p>
+              <p class="text-xs" style="color: #9ca3af;">{{ $p->book->pengarang }}</p>
+            </td>
+            <td class="hidden md:table-cell">
+              <p class="text-xs {{ $p->status === 'terlambat' ? 'font-semibold' : '' }}"
+                 style="color: {{ $p->status === 'terlambat' ? '#A32D2D' : '#6b7280' }};">
+                {{ $p->tanggal_kembali_rencana->format('d M Y') }}
+              </p>
+              @if($p->status === 'terlambat')
+                <p class="text-xs" style="color: #A32D2D;">{{ $p->hari_terlambat }} hari lewat</p>
+              @endif
+            </td>
+            <td>
+              <span class="pill pill-{{ $p->status }}">{{ ucfirst($p->status) }}</span>
+            </td>
+            <td>
+              @if($p->status === 'terlambat')
+                <p class="text-xs font-semibold" style="color: #A32D2D;">
+                  Rp{{ number_format($p->total_denda, 0, ',', '.') }}
+                </p>
+                <p class="text-xs" style="color: #9ca3af;">{{ $p->hari_terlambat }} hari</p>
+              @else
+                <span style="color: #d1d5db; font-size: 0.75rem;">—</span>
+              @endif
+            </td>
+            <td>
+              @if($p->status !== 'dikembalikan')
+                <form method="POST"
+                      action="{{ route('admin.peminjaman.kembalikan', $p) }}"
+                      onsubmit="return confirm('Konfirmasi pengembalian buku ini?')">
+                  @csrf @method('PATCH')
+                  <button type="submit" class="btn-kembalikan">Kembalikan</button>
+                </form>
+              @else
+                <span style="color: #d1d5db; font-size: 0.75rem;">Selesai</span>
+              @endif
+            </td>
+          </tr>
+        @endforeach
+      </tbody>
+    </table>
+  </div>
+
+  <div class="px-5 py-3 border-t" style="border-color: #f5f5f5;">
+    {{ $peminjaman->links() }}
+  </div>
+</div>
+
+@endsection
