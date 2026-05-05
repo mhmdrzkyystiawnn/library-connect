@@ -133,6 +133,31 @@
     display: flex; align-items: center; justify-content: center;
     margin: 0 auto 14px;
   }
+  .nav-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1.5px solid #e5e7eb;
+    background: #fff;
+    color: #6b7280;
+    text-decoration: none;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .nav-tab:hover {
+    border-color: #0F6E56;
+    color: #0F6E56;
+    background: #f0faf6;
+  }
+  .nav-tab.active {
+    background: #0F6E56;
+    border-color: #0F6E56;
+    color: #fff;
+  }
 </style>
 
 
@@ -141,44 +166,55 @@
     <h1 class="text-xl font-semibold" style="color: #1a1a1a;">Data Peminjaman</h1>
     <p class="text-sm mt-0.5" style="color: #9ca3af;">Kelola semua transaksi peminjaman buku</p>
   </div>
-
-  {{-- Tombol Aksi --}}
-  <div class="flex flex-col gap-2">
-
-    {{-- Tambah Peminjaman - solid hijau --}}
-    <a href="{{ route('admin.peminjaman.create') }}" class="btn-primary">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-      </svg>
-      Tambah Peminjaman
-    </a>
-
-    {{-- Lihat Rekap Denda - outline hijau --}}
-    <a href="{{ route('admin.denda.index') }}" class="btn-primary"
-       style="background: #fff; color: #0F6E56; border: 1.5px solid #0F6E56;">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2
-             m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1
-             c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-      </svg>
-      Lihat Rekap Denda
-    </a>
-
-    {{-- Kembali ke Dashboard - abu-abu --}}
-    <a href="{{ route('admin.dashboard') }}" class="btn-primary"
-       style="background: #f3f4f6; color: #6b7280; border: 1.5px solid #e5e7eb;">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10
-             a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4
-             a1 1 0 001 1m-6 0h6"/>
-      </svg>
-      Kembali ke Dashboard
-    </a>
-
-  </div>
 </div>
+
+{{-- ══ NAV TABS ══ --}}
+<div class="flex gap-2 mb-5 flex-wrap">
+  <a href="{{ route('admin.dashboard') }}" class="nav-tab">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10
+           a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4
+           a1 1 0 001 1m-6 0h6"/>
+    </svg>
+    Dashboard
+  </a>
+  <a href="{{ route('admin.peminjaman.index') }}" class="nav-tab active">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2
+           M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+    </svg>
+    Peminjaman
+  </a>
+  <a href="{{ route('admin.booking.index') }}" class="nav-tab">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13
+           C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13
+           C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13
+           C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+    </svg>
+    Booking Buku
+  </a>
+  <a href="{{ route('admin.denda.index') }}" class="nav-tab">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2
+           m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1
+           c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+    </svg>
+    Rekap Denda
+  </a>
+  <a href="{{ route('books.index') }}" class="nav-tab">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+    </svg>
+    Cari Buku
+  </a>
+</div>
+
 {{-- ══ STAT CARDS ══ --}}
 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
   <div class="stat-card">

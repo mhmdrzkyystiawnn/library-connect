@@ -202,9 +202,21 @@
     background: var(--rule);
     position: relative;
     transition: background 0.2s;
+    cursor: pointer;
+    flex-shrink: 0;
   }
 
-  .toggle-track.on { background: var(--emerald); }
+  .toggle-track:hover {
+    background: rgba(13, 79, 60, 0.15);
+  }
+
+  .toggle-track.on { 
+    background: var(--emerald);
+  }
+
+  .toggle-track.on:hover {
+    background: var(--emerald-lt);
+  }
 
   .toggle-knob {
     position: absolute;
@@ -214,6 +226,7 @@
     border-radius: 50%;
     transition: transform 0.2s;
     box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    cursor: pointer;
   }
 
   .toggle-knob.on { transform: translateX(18px); }
@@ -223,7 +236,14 @@
     font-weight: 500;
     color: var(--ink-muted);
     user-select: none;
+    cursor: pointer;
+    transition: color 0.15s;
   }
+
+  .toggle-label:hover {
+    color: var(--emerald);
+  }
+
 
   /* ── RESULT INFO ── */
   .result-info {
@@ -597,13 +617,13 @@
     </div>
   </div>
 
-  <label class="toggle-wrapper">
+  {{-- <label class="toggle-wrapper">
     <input type="checkbox" id="tersediaToggle" style="display:none;" {{ request('tersedia') ? 'checked' : '' }}>
     <div class="toggle-track {{ request('tersedia') ? 'on' : '' }}" id="toggleTrack">
       <div class="toggle-knob {{ request('tersedia') ? 'on' : '' }}" id="toggleKnob"></div>
     </div>
-    <span class="toggle-label">Tersedia saja</span>
-  </label>
+    <span class="toggle-label" id="toggleLabel">Tersedia saja</span>
+  </label> --}}
 </div>
 
 {{-- Result info --}}
@@ -717,24 +737,52 @@
 
 @push('scripts')
 <script>
-  const toggle = document.getElementById('tersediaToggle');
-  const track  = document.getElementById('toggleTrack');
-  const knob   = document.getElementById('toggleKnob');
+  const toggle  = document.getElementById('tersediaToggle');
+  const track   = document.getElementById('toggleTrack');
+  const knob    = document.getElementById('toggleKnob');
+  const label   = document.getElementById('toggleLabel');
 
-  toggle?.addEventListener('change', function () {
+  function updateToggleState(isChecked) {
     const url = new URL(window.location.href);
-    if (this.checked) {
+    if (isChecked) {
       url.searchParams.set('tersedia', '1');
       track.classList.add('on');
       knob.classList.add('on');
+      toggle.checked = true;
     } else {
       url.searchParams.delete('tersedia');
       track.classList.remove('on');
       knob.classList.remove('on');
+      toggle.checked = false;
     }
     window.location.href = url.toString();
+  }
+
+  // Event listener pada checkbox
+  toggle?.addEventListener('change', function () {
+    updateToggleState(this.checked);
   });
 
+  // Event listener pada toggle track (clickable)
+  track?.addEventListener('click', function () {
+    toggle.checked = !toggle.checked;
+    updateToggleState(toggle.checked);
+  });
+
+  // Event listener pada toggle knob (clickable)
+  knob?.addEventListener('click', function (e) {
+    e.stopPropagation();
+    toggle.checked = !toggle.checked;
+    updateToggleState(toggle.checked);
+  });
+
+  // Event listener pada label (clickable)
+  label?.addEventListener('click', function () {
+    toggle.checked = !toggle.checked;
+    updateToggleState(toggle.checked);
+  });
+
+  // Focus pada search input di desktop
   if (window.innerWidth >= 768) {
     document.getElementById('searchInput')?.focus();
   }
